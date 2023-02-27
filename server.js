@@ -4,10 +4,9 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const morgan = require('morgan');
 const cors = require('cors');
-const solvePost = require('./controllers/post/solvePost');
 const isAuth = require('./middlewares/isAuth');
-const newPost = require('./controllers/post/newPost');
-const selectAllPost = require ("./controllers/post/selectAllPost")
+
+
 
 
 // Creamos el servidor.
@@ -39,10 +38,8 @@ const {
     newUser,
     validateUser,
     loginUser,
+
 } = require('./controllers/users');
-
-
-
 
 
 // Crear un usuario.
@@ -60,7 +57,13 @@ app.post('/users/login', loginUser)
  * ## Controladores Post ##
  * ##########################
  */
-
+const {
+    selectPostById,
+    selectAllPost,
+    solvePost,
+    newPost
+} = require('./controllers/post');
+ 
 //Crear un nuevo Post
 app.post('/posts', isAuth, newPost)
 
@@ -69,6 +72,9 @@ app.put('/posts/:id', isAuth ,solvePost)
 
 //Seleciona todos los post por palabra clave
 app.get('/posts', selectAllPost)
+
+//Selecionamos un único post por su id
+app.get('/posts/:id', selectPostById)
 
 
 

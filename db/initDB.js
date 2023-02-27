@@ -4,6 +4,9 @@ require('dotenv').config();
 // Importamos la función que permite obtener una conexión con la base de datos.
 const getDB = require('./getDB');
 
+//Funcion para encriptar la contraseña del usuario administrador
+const bcrypt = require('bcrypt');
+
 // Función que se encarga de crear las tablas.
 const createTables = async () => {
     // Variable que almacenará una conexión libre con la base de datos.
@@ -49,10 +52,13 @@ const createTables = async () => {
                 modifiedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         `);
+        // Encriptamos la contraseña.
+        const password = "12345";
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         await connection.query(`
             INSERT INTO users (name, email, password, active)
-            VALUES( 'Administrador', 'administrador@gmail.com', '12345', '1')`)
+            VALUES( 'Administrador', 'administrador@gmail.com', '${hashedPassword}', '1')`)
 
         console.log('¡Tablas creadas!');
     } catch (err) {

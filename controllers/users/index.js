@@ -6,4 +6,5 @@ module.exports = {
     newUser,
     validateUser,
     loginUser,
+
 };

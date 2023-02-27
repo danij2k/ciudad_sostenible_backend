@@ -12,7 +12,7 @@ const selectAllPostQuery = async (keyword = '') => {
                 title, text, barrio, photo, idUser
                 FROM posts P
                 WHERE P.text LIKE ?
-                
+                ORDER BY P.createdAt DESC
                 
             `,
             [`%${keyword}%`, ]
