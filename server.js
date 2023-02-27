@@ -7,7 +7,7 @@ const cors = require('cors');
 const solvePost = require('./controllers/post/solvePost');
 const isAuth = require('./middlewares/isAuth');
 const newPost = require('./controllers/post/newPost');
-const selecAllPost = require ("./controllers/post/selecAllPost")
+const selectAllPost = require ("./controllers/post/selectAllPost")
 
 
 // Creamos el servidor.
@@ -40,7 +40,7 @@ const {
     validateUser,
     loginUser,
 } = require('./controllers/users');
-const selecAllPostQuery = require('./db/querys/post/selecAllPostQuery');
+
 
 
 
@@ -68,7 +68,7 @@ app.post('/posts', isAuth, newPost)
 app.put('/posts/:id', isAuth ,solvePost)
 
 //Seleciona todos los post por palabra clave
-app.get('/posts', selecAllPost)
+app.get('/posts', selectAllPost)
 
 
 
