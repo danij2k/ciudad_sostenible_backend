@@ -1,27 +1,27 @@
-const getDB = require('../../getDB');
+const getDB = require("../../getDB");
 
-const selectAllPostQuery = async (keyword = '') => {
-    let connection;
+const selectAllPostQuery = async (keyword = "") => {
+  let connection;
 
-    try {
-        connection = await getDB();
+  try {
+    connection = await getDB();
 
-        const [post] = await connection.query(
-            `
+    const [post] = await connection.query(
+      `
                 SELECT 
-                title, text, barrio, photo, idUser
+                id, title, text, barrio, photo, idUser, resuelto, createdAt
                 FROM posts P
                 WHERE P.text LIKE ?
                 ORDER BY P.createdAt DESC
                 
             `,
-            [`%${keyword}%`, ]
-        );
+      [`%${keyword}%`]
+    );
 
-        return post;
-    } finally {
-        if (connection) connection.release();
-    }
+    return post;
+  } finally {
+    if (connection) connection.release();
+  }
 };
 
 module.exports = selectAllPostQuery;
