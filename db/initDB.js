@@ -1,29 +1,29 @@
 // No es necesario replicar este código en "getDB.js".
-require('dotenv').config();
+require("dotenv").config();
 
 // Importamos la función que permite obtener una conexión con la base de datos.
-const getDB = require('./getDB');
+const getDB = require("./getDB");
 
 //Funcion para encriptar la contraseña del usuario administrador
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 // Función que se encarga de crear las tablas.
 const createTables = async () => {
-    // Variable que almacenará una conexión libre con la base de datos.
-    let connection;
+  // Variable que almacenará una conexión libre con la base de datos.
+  let connection;
 
-    try {
-        // Intentamos obtener una conexión libre.
-        connection = await getDB();
-        
-        console.log('Borrando tablas...');
+  try {
+    // Intentamos obtener una conexión libre.
+    connection = await getDB();
 
-        await connection.query('DROP TABLE IF EXISTS posts');
-        await connection.query('DROP TABLE IF EXISTS users');
+    console.log("Borrando tablas...");
 
-        console.log('Creando tablas...');
+    await connection.query("DROP TABLE IF EXISTS posts");
+    await connection.query("DROP TABLE IF EXISTS users");
 
-        await connection.query(`
+    console.log("Creando tablas...");
+
+    await connection.query(`
             CREATE TABLE IF NOT EXISTS users (
                 id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(100) UNIQUE NOT NULL,
@@ -38,7 +38,7 @@ const createTables = async () => {
     
         `);
 
-        await connection.query(`
+    await connection.query(`
             CREATE TABLE IF NOT EXISTS posts (
                 id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
                 idUser INT UNSIGNED NOT NULL,
@@ -46,30 +46,30 @@ const createTables = async () => {
                 title VARCHAR(100) NOT NULL,
                 text VARCHAR(280) NOT NULL,
                 barrio VARCHAR(100) NOT NULL,          
-                photo VARCHAR(100),
+                photo VARCHAR(100) NOT NULL,
                 resuelto BOOLEAN DEFAULT FALSE,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 modifiedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         `);
-        // Encriptamos la contraseña.
-        const password = "12345";
-        const hashedPassword = await bcrypt.hash(password, 10);
+    // Encriptamos la contraseña.
+    const password = "12345";
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        await connection.query(`
+    await connection.query(`
             INSERT INTO users (name, email, password, active)
-            VALUES( 'Administrador', 'administrador@gmail.com', '${hashedPassword}', '1')`)
+            VALUES( 'Administrador', 'administrador@gmail.com', '${hashedPassword}', '1')`);
 
-        console.log('¡Tablas creadas!');
-    } catch (err) {
-        console.error(err);
-    } finally {
-        // Si existe una conexión la liberamos.
-        if (connection) connection.release();
+    console.log("¡Tablas creadas!");
+  } catch (err) {
+    console.error(err);
+  } finally {
+    // Si existe una conexión la liberamos.
+    if (connection) connection.release();
 
-        // Cerramos el proceso (opcionalmente).
-        process.exit();
-    }
+    // Cerramos el proceso (opcionalmente).
+    process.exit();
+  }
 };
 
 // Llamamos a la función anterior.

@@ -1,13 +1,10 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const fileUpload = require('express-fileupload');
-const morgan = require('morgan');
-const cors = require('cors');
-const isAuth = require('./middlewares/isAuth');
-
-
-
+const express = require("express");
+const fileUpload = require("express-fileupload");
+const morgan = require("morgan");
+const cors = require("cors");
+const isAuth = require("./middlewares/isAuth");
 
 // Creamos el servidor.
 const app = express();
@@ -19,7 +16,7 @@ app.use(cors());
 app.use(express.static(process.env.UPLOADS_DIR));
 
 // Middleware que muestra información por consola sobre la petición entrante.
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 // Middleware que permite deserializar un body en formato "raw" creando la propiedad
 // "body" en el objeto "request".
@@ -35,22 +32,23 @@ app.use(fileUpload());
  * ##########################
  */
 const {
-    newUser,
-    validateUser,
-    loginUser,
-
-} = require('./controllers/users');
-
+  newUser,
+  validateUser,
+  loginUser,
+  getMe,
+} = require("./controllers/users");
 
 // Crear un usuario.
-app.post('/users', newUser);
+app.post("/users", newUser);
+
+// Devuelve la información del usuario del token
+app.get("/user", isAuth, getMe);
 
 // Validamos un usuario.
-app.put('/users/validate/:registrationCode', validateUser);
+app.put("/users/validate/:registrationCode", validateUser);
 
 // Login de usuario.
-app.post('/users/login', loginUser)
-
+app.post("/users/login", loginUser);
 
 /**
  * ##########################
@@ -58,46 +56,43 @@ app.post('/users/login', loginUser)
  * ##########################
  */
 const {
-    selectPostById,
-    selectAllPost,
-    solvePost,
-    newPost
-} = require('./controllers/post');
- 
+  selectPostById,
+  selectAllPost,
+  solvePost,
+  newPost,
+} = require("./controllers/post");
+
 //Crear un nuevo Post
-app.post('/posts', isAuth, newPost)
+app.post("/posts", isAuth, newPost);
 
 //Resolver o activar un Post
-app.put('/posts/:id', isAuth ,solvePost)
+app.put("/posts/:id", isAuth, solvePost);
 
 //Seleciona todos los post por palabra clave
-app.get('/posts', selectAllPost)
+app.get("/posts", selectAllPost);
 
 //Selecionamos un único post por su id
-app.get('/posts/:id', selectPostById)
-
-
-
+app.get("/posts/:id", selectPostById);
 
 // Middleware de error.
 app.use((err, req, res, next) => {
-    console.error(err);
+  console.error(err);
 
-    res.status(err.httpStatus || 500).send({
-        status: 'error',
-        message: err.message,
-    });
+  res.status(err.httpStatus || 500).send({
+    status: "error",
+    message: err.message,
+  });
 });
 
 // Middleware de ruta no encontrada.
 app.use((req, res) => {
-    res.status(404).send({
-        status: 'error',
-        message: 'Ruta no encontrada',
-    });
+  res.status(404).send({
+    status: "error",
+    message: "Ruta no encontrada",
+  });
 });
 
 // Ponemos el servidor a escuchar peticiones en un puerto dado.
 app.listen(process.env.PORT, () => {
-    console.log(`Server listenting at http://localhost:${process.env.PORT}`);
+  console.log(`Server listenting at http://localhost:${process.env.PORT}`);
 });
